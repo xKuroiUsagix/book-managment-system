@@ -3,3 +3,4 @@ env
 venv
 uploads
 .env
+test.db
