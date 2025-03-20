@@ -4,3 +4,4 @@ venv
 uploads
 .env
 test.db
+*_cache
