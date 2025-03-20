@@ -1,8 +1,6 @@
 from typing import Optional
 from datetime import date
-
 from pydantic import BaseModel, field_validator
-from fastapi import HTTPException
 
 from .constants import VALID_GENRES
 
@@ -27,7 +25,7 @@ class BookCreate(BaseModel):
 
     @field_validator('title')
     def validate_title(cls, v):
-        if not v or v.strip() == "":
+        if not v or v.strip() == '':
             raise ValueError('Title cannot be empty')
         return v
     
@@ -41,7 +39,7 @@ class BookCreate(BaseModel):
     @field_validator('genre')
     def validate_genre(cls, v):
         if v not in VALID_GENRES:
-            raise ValueError(f'Genre "{v}" is not valid. Must be one of: {", ".join(VALID_GENRES)}')
+            raise ValueError(f"Genre '{v}' is not valid. Must be one of: {', '.join(VALID_GENRES)}")
         return v
 
 
@@ -53,7 +51,7 @@ class BookUpdate(BaseModel):
 
     @field_validator('title')
     def validate_title(cls, v):
-        if not v or v.strip() == "":
+        if not v or v.strip() == '':
             raise ValueError('Title cannot be empty')
         return v
     
@@ -67,7 +65,7 @@ class BookUpdate(BaseModel):
     @field_validator('genre')
     def validate_genre(cls, v):
         if v not in VALID_GENRES:
-            raise ValueError(f'Genre "{v}" is not valid. Must be one of: {", ".join(VALID_GENRES)}')
+            raise ValueError(f"Genre '{v}' is not valid. Must be one of: {', '.join(VALID_GENRES)}")
         return v
 
 

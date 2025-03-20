@@ -6,20 +6,20 @@ from typing import Optional
 
 
 def create_author(db: Session, name: str):
-    sql = """
+    sql = '''
     INSERT INTO authors (name) VALUES (:name) RETURNING id;
-    """
+    '''
     result = db.execute(text(sql), {'name': name})
     db.commit()
     return result.scalar()
 
 
 def create_book(db: Session, title: str, author_id: int, genre: str, published_year: int):
-    sql = """
+    sql = '''
     INSERT INTO books (title, author_id, genre, published_year)
     VALUES (:title, :author_id, :genre, :published_year)
     RETURNING id;
-    """
+    '''
     result = db.execute(text(sql), {
         'title': title, 
         'author_id': author_id,
@@ -33,7 +33,7 @@ def create_book(db: Session, title: str, author_id: int, genre: str, published_y
 
 def get_books(db: Session, title: Optional[str], author: Optional[str], genre: Optional[str], 
               year_min: Optional[int], year_max: Optional[int], page: int, limit: int):
-    sql = """
+    sql = '''
     SELECT books.id, books.title, books.genre, books.published_year, authors.id AS author_id
     FROM books
     JOIN authors ON books.author_id = authors.id
@@ -44,7 +44,7 @@ def get_books(db: Session, title: Optional[str], author: Optional[str], genre: O
     AND (:year_max IS NULL OR books.published_year <= :year_max)
     ORDER BY published_year
     LIMIT :limit OFFSET :offset;
-    """
+    '''
 
     result = db.execute(text(sql), {
         'title': title,
@@ -70,25 +70,25 @@ def get_books(db: Session, title: Optional[str], author: Optional[str], genre: O
 
 
 def get_book_by_id(db: Session, book_id: int):
-    sql = """
+    sql = '''
     SELECT books.id, books.title, books.genre, books.published_year, authors.id AS author_id
     FROM books
     JOIN authors ON books.author_id = authors.id
     WHERE books.id = :book_id;
-    """
+    '''
     result = db.execute(text(sql), {'book_id': book_id})
     return result.fetchone()
 
 
 def update_book(db: Session, book_id: int, title: Optional[str], genre: Optional[str], published_year: Optional[int]):
-    sql = """
+    sql = '''
     UPDATE books
     SET title = COALESCE(:title, title),
         genre = COALESCE(:genre, genre),
         published_year = COALESCE(:published_year, published_year)
     WHERE id = :book_id
     RETURNING id    
-    """
+    '''
     result = db.execute(text(sql), {
         'book_id': book_id,
         'title': title,
@@ -100,7 +100,7 @@ def update_book(db: Session, book_id: int, title: Optional[str], genre: Optional
 
 
 def delete_book(db: Session, book_id: int):
-    sql = "DELETE FROM books WHERE id = :book_id;"
+    sql = 'DELETE FROM books WHERE id = :book_id;'
     result = db.execute(text(sql), {'book_id': book_id})
     db.commit()
     return result.rowcount > 0
@@ -117,10 +117,10 @@ def bulk_import_books(db: Session, file_path: str):
             reader = csv.DictReader(f)
             books = [row for row in reader]
     
-    sql = """
+    sql = '''
     INSERT INTO books (title, author_id, genre, published_year)
     VALUES (:title, :author_id, :genre, :published_year);
-    """
+    '''
     
     for book in books:
         db.execute(text(sql), book)

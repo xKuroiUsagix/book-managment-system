@@ -95,7 +95,7 @@ def remove_book(book_id: int, db: Session=Depends(get_db), user=Depends(get_curr
     return {'message': 'Book deleted successfully'}
 
 
-@router.post('/import/', status_code=status.HTTP_200_OK)
+@router.post('/import', status_code=status.HTTP_200_OK)
 def import_books(file: UploadFile = File(...), db: Session=Depends(get_db), user=Depends(get_current_user)):
     upload_dir = './uploads'
     

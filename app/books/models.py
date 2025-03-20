@@ -10,7 +10,7 @@ class Author(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
 
-    books = relationship('Book', back_populates='authors')
+    books = relationship('Book', back_populates='author')
 
 
 class Book(Base):
