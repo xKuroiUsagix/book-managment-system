@@ -2,9 +2,11 @@ import pytest
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from fastapi.testclient import TestClient
+
 from app.database import Base, get_db
 from app.main import app
-from fastapi.testclient import TestClient
+
 
 TEST_DATABASE_URL = 'sqlite:///./test.db'
 
@@ -18,6 +20,13 @@ def setup_database():
     yield
     Base.metadata.drop_all(bind=engine)
 
+@pytest.fixture(scope="session", autouse=True)
+def cleanup_test_db():
+    yield
+
+    db = next(get_db())
+    db.execute(text("TRUNCATE TABLE books, users RESTART IDENTITY CASCADE;"))
+    db.commit()
 
 @pytest.fixture(scope='function')
 def db_session():
@@ -26,7 +35,6 @@ def db_session():
     yield session
     session.close()
     Base.metadata.drop_all(bind=engine)
-
 
 @pytest.fixture(scope='function')
 def client():
@@ -39,12 +47,3 @@ def client():
 
     app.dependency_overrides[get_db] = override_get_db
     return TestClient(app)
-
-
-@pytest.fixture(scope="session", autouse=True)
-def cleanup_test_db():
-    yield
-
-    db = next(get_db())
-    db.execute(text("TRUNCATE TABLE books, users RESTART IDENTITY CASCADE;"))
-    db.commit()

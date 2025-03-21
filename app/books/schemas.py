@@ -8,14 +8,12 @@ from .constants import VALID_GENRES
 class AuthorCreate(BaseModel):
     name: str
 
-
 class AuthorResponse(BaseModel):
     id: int
     name: str
 
     class Config:
         from_attributes = True
-
 
 class BookCreate(BaseModel):
     title: str
@@ -42,7 +40,6 @@ class BookCreate(BaseModel):
             raise ValueError(f"Genre '{v}' is not valid. Must be one of: {', '.join(VALID_GENRES)}")
         return v
 
-
 class BookUpdate(BaseModel):
     title: Optional[str] = None
     author_id: Optional[int] = None
@@ -67,7 +64,6 @@ class BookUpdate(BaseModel):
         if v not in VALID_GENRES:
             raise ValueError(f"Genre '{v}' is not valid. Must be one of: {', '.join(VALID_GENRES)}")
         return v
-
 
 class BookResponse(BaseModel):
     id: int

@@ -1,8 +1,9 @@
 import csv, json
 
+from typing import Optional
+
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from typing import Optional
 
 
 def create_author(db: Session, name: str):
@@ -12,7 +13,6 @@ def create_author(db: Session, name: str):
     result = db.execute(text(sql), {'name': name})
     db.commit()
     return result.scalar()
-
 
 def create_book(db: Session, title: str, author_id: int, genre: str, published_year: int):
     sql = '''
@@ -29,7 +29,6 @@ def create_book(db: Session, title: str, author_id: int, genre: str, published_y
     
     db.commit()
     return result.scalar()
-
 
 def get_books(db: Session, title: Optional[str], author: Optional[str], genre: Optional[str], 
               year_min: Optional[int], year_max: Optional[int], page: int, limit: int):
@@ -68,7 +67,6 @@ def get_books(db: Session, title: Optional[str], author: Optional[str], genre: O
         for book in books
     ]
 
-
 def get_book_by_id(db: Session, book_id: int):
     sql = '''
     SELECT books.id, books.title, books.genre, books.published_year, authors.id AS author_id
@@ -78,7 +76,6 @@ def get_book_by_id(db: Session, book_id: int):
     '''
     result = db.execute(text(sql), {'book_id': book_id})
     return result.fetchone()
-
 
 def update_book(db: Session, book_id: int, title: Optional[str], genre: Optional[str], published_year: Optional[int]):
     sql = '''
@@ -98,13 +95,11 @@ def update_book(db: Session, book_id: int, title: Optional[str], genre: Optional
     db.commit()
     return result.scalar()
 
-
 def delete_book(db: Session, book_id: int):
     sql = 'DELETE FROM books WHERE id = :book_id;'
     result = db.execute(text(sql), {'book_id': book_id})
     db.commit()
     return result.rowcount > 0
-
 
 def bulk_import_books(db: Session, file_path: str):
     books = []

@@ -5,14 +5,14 @@ from typing import List, Optional
 from fastapi import (APIRouter, Depends, File, UploadFile, HTTPException, status)
 from sqlalchemy.orm import Session
 
-from ..authentication.auth import get_current_user
-from ..database import get_db
 from .crud import (
     create_author, create_book, get_books, get_book_by_id, update_book, delete_book, bulk_import_books
 )
 from .schemas import (
     AuthorCreate, AuthorResponse, BookCreate, BookResponse, BookUpdate
 )
+from ..authentication.auth import get_current_user
+from ..database import get_db
 
 
 router = APIRouter()
@@ -29,7 +29,6 @@ def add_author(author: AuthorCreate, db: Session=Depends(get_db), user=Depends(g
         )
     return {'id': author_id, 'name': author.name, 'message': 'Author created successfully'}
 
-
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def add_book(book: BookCreate, db: Session=Depends(get_db), user=Depends(get_current_user)):
     book_id = create_book(db, book.title, book.author_id, book.genre, book.published_year)
@@ -40,7 +39,6 @@ def add_book(book: BookCreate, db: Session=Depends(get_db), user=Depends(get_cur
             detail='Book could not be created'
         )
     return {'id': book_id, 'message': 'Book created successfully'}
-
 
 @router.get('/', response_model=List[BookResponse], status_code=status.HTTP_200_OK)
 def list_books(title: Optional[str] = None, 
@@ -58,7 +56,6 @@ def list_books(title: Optional[str] = None,
         )
     return books
 
-
 @router.get('/{book_id}', response_model=BookResponse)
 def get_book(book_id: int, db: Session = Depends(get_db)):
     book = get_book_by_id(db, book_id)
@@ -69,7 +66,6 @@ def get_book(book_id: int, db: Session = Depends(get_db)):
             detail='Book not found'
         )
     return book
-
 
 @router.put('/{book_id}', status_code=status.HTTP_200_OK)
 def edit_book(book_id: int, book: BookUpdate, db: Session=Depends(get_db), user=Depends(get_current_user)):
@@ -82,7 +78,6 @@ def edit_book(book_id: int, book: BookUpdate, db: Session=Depends(get_db), user=
         )
     return {'message': 'Book updated successfully'}
 
-
 @router.delete('/{book_id}', status_code=status.HTTP_204_NO_CONTENT)
 def remove_book(book_id: int, db: Session=Depends(get_db), user=Depends(get_current_user)):
     is_deleted = delete_book(db, book_id)
@@ -93,7 +88,6 @@ def remove_book(book_id: int, db: Session=Depends(get_db), user=Depends(get_curr
             detail='Book not found'
         )
     return {'message': 'Book deleted successfully'}
-
 
 @router.post('/import', status_code=status.HTTP_200_OK)
 def import_books(file: UploadFile = File(...), db: Session=Depends(get_db), user=Depends(get_current_user)):
