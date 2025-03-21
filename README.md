@@ -13,6 +13,10 @@ Develop a feature-rich book management system using FastAPI for the backend and 
 
 After these steps, the server should be running successfully.
 
+## Tests
+
+Use `pytest` command to run tests.
+
 ## API Docs
 
 When server is runing you can check API documentation by going to http://127.0.0.1:8000/docs#/
